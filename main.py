@@ -3,7 +3,7 @@
 from tkinter import *
 from tkinter import messagebox
 from random import choice, shuffle, randint
-# import pyperclip
+import pyperclip
 import sqlite3 as sql
 
 # ---------------------------- DATABASE INIT ------------------------------- #
@@ -61,7 +61,7 @@ def generate_password():
     password = "".join(password_list)
     password_entry.delete(0, END)
     password_entry.insert(0, password)
-    # pyperclip.copy(password)
+    pyperclip.copy(password)
 
 
 # ---------------------------- SEARCH METHOD ------------------------------- #
@@ -81,7 +81,7 @@ def find_password():
     except TypeError:
         show_popup_window("Error", "No information found.")
     else:
-        # pyperclip.copy(curr_password)
+        pyperclip.copy(curr_password)
         show_popup_window(f"{website}", f"Email: {curr_email}\n Password: {curr_password}\n\n"
                                         f"Password has been copied to your clipboard.")
 
@@ -93,7 +93,7 @@ def save():
     web = web_entry.get().title().lower()
     email = email_entry.get()
     password = password_entry.get()
-    # pyperclip.copy(password)
+    pyperclip.copy(password)
 
     # If no fields are empty
     if len(web) == 0 or len(password) == 0 or len(email) == 0:
