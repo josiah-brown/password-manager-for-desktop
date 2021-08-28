@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --path='/Users/josiahbrown/PycharmProjects/day-29-password-manager/venv/lib/python3.9/site-packages' --add-data '/Users/josiahbrown/PycharmProjects/day-29-password-manager/logo.png:.' main.py

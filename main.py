@@ -5,6 +5,17 @@ from tkinter import messagebox
 from random import choice, shuffle, randint
 import pyperclip
 import sqlite3 as sql
+import os
+
+
+# ---------------------------- PYINSTALLER HELP ------------------------------- #
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 
 # ---------------------------- DATABASE INIT ------------------------------- #
 # Connect to the DB file
@@ -68,7 +79,7 @@ def generate_password():
 def find_password():
     """If the password exists, copies to clipboard"""
     # Get the data in the website field
-    website = web_entry.get().title().lower()
+    website = web_entry.get().title()
 
     # Check to see if the site exists in the DB
     cursor.execute("SELECT * FROM info WHERE website=:site", {"site": website})
@@ -90,7 +101,7 @@ def find_password():
 def save():
     """Saves the current field values as a new entry in the DB"""
     # Save the field values to variables and copy password
-    web = web_entry.get().title().lower()
+    web = web_entry.get().title()
     email = email_entry.get()
     password = password_entry.get()
     pyperclip.copy(password)
@@ -119,6 +130,28 @@ def save():
             show_popup_window("Error", "Looks like you have already entered information for that site.")
 
 
+def update_password():
+    """If the password exists, changes password, and copies new password to clipboard"""
+    # Get the data in the website field
+    website = web_entry.get().title()
+    new_password = password_entry.get()
+
+    # Check to see if the site exists in the DB
+    cursor.execute("SELECT * FROM info WHERE website=:site", {"site": website})
+    curr_site = cursor.fetchone()
+
+    # If info is found, copy the password and display a popup with all info
+    try:
+        curr_email = curr_site[1]
+    except TypeError:
+        show_popup_window("Error", "No previous password found.")
+    else:
+        cursor.execute(f"UPDATE info SET password=:new WHERE website=:site", {"new": new_password, "site": website})
+        pyperclip.copy(new_password)
+        show_popup_window(f"{website}", f"Email: {curr_email}\n Password: {new_password}\n\n"
+                                        f"Password has been copied to your clipboard.")
+
+
 def close_window():
     """Closes the window after saving the data to the DB"""
     conn.commit()
@@ -132,7 +165,7 @@ window.title("Password Manager")
 window.config(padx=20, pady=20)
 
 canvas = Canvas(width=200, height=200)
-lock_img = PhotoImage(file="logo.png")
+lock_img = PhotoImage(file=resource_path("logo.png"))
 canvas.create_image(100, 100, image=lock_img)
 canvas.grid(column=1, row=0)
 
@@ -163,5 +196,8 @@ search_button = Button(text="Search", width=13, command=find_password)
 search_button.grid(column=2, row=1)
 close_window_button = Button(text="CLOSE", width=10, height=5, highlightbackground='red', command=close_window)
 close_window_button.grid(column=0, row=0)
+update_password_button = Button(text="Update\nPassword", width=10, height=5,
+                                highlightbackground='green', command=update_password)
+update_password_button.grid(column=2, row=0)
 
 window.mainloop()

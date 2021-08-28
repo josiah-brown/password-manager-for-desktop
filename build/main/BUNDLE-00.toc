@@ -1,3 +1,0 @@
-([('main',
-   '/Users/josiahbrown/PycharmProjects/day-29-password-manager/dist/main',
-   'EXECUTABLE')],)
